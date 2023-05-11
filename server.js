@@ -20,36 +20,47 @@ var rollbar = new Rollbar({
 rollbar.log('Hello world!')
 
 const foods = ['Pizza', 'Burger', 'Cake']
+const places = ['Paris', 'Japan', 'Munich']
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'))
 })
 
+let foodplace = []
+
 app.get('/api/foods', (req, res) => {
-    rollbar.info('someone requested the list of foods')
-    res.status(200).send(foods)
+    for(let i in foods) {
+        foodplace.push(foods[i] + ' ' + places[i])
+    }
+    res.status(200).send(foodplace)
 })
 
-app.post('/api/foods', (req, res) => {
-   let {name} = req.body
 
-   const index = foods.findIndex(food => {
-       return food === name
+app.post('/api/foods', (req, res) => {
+   let {name,place} = req.body
+    
+
+   const index = foodplace.findIndex(food => {
+       return food === (name,place)
    })
 
    try {
-       if (index === -1 && name !== '') {
-           foods.push(name)
-           res.status(200).send(foods)
+       if (index === -1 && place !== '') {
+            foodplace.push((name,place))
+           res.status(200).send(foodplace)
+           
        } 
        
-       else if (name === ''){
+       else if (place === ''){
+           rollbar.warning(`${name} can't be blank`)
            res.status(400).send('You must enter a name.')
        } 
        else {
+           rollbar.critical(`${name} already exists`)
            res.status(400).send('That food already exists.')
        }
    } catch (err) {
+       rollbar.error('Cannot add food')
        console.log(err)
    }
 })
@@ -57,10 +68,11 @@ app.post('/api/foods', (req, res) => {
 app.delete('/api/foods/:index', (req, res) => {
     const targetIndex = +req.params.index
     
-    foods.splice(targetIndex, 1)
-    res.status(200).send(foods)
+    foodplace.splice(targetIndex, 1)
+    res.status(200).send(foodplace)
 })
 
 const port = process.env.PORT || 4000
 
 app.listen(port, () => console.log(`Server listening on ${port}`))
+

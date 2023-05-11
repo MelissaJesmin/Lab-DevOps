@@ -5,21 +5,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Favorite Food</title>
+    
 </head>
 
 <body>
     <h1>Favorite Food</h1>
     <form>
-        <input type='text' placeholder='type your favorite food here...' />
+        <input id ="food" type='text' placeholder='type your favorite food here...' />
+        <input type="text" name="" id="place" placeholder="favorite place">
         <button>add food</button>
     </form>
     <section></section>
 
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script>
         const addForm = document.querySelector('form');
-        const nameInput = document.querySelector('input');
+        const nameInput = document.querySelector('#food');
+        const placeInput = document.querySelector('#place');
         const container = document.querySelector('section');
 
 
@@ -49,12 +54,13 @@
             evt.preventDefault();
 
             axios
-                .post(`${baseUrl}/api/foods`, { name: nameInput.value })
+                .post(`${baseUrl}/api/foods`, ({ name: nameInput.value }, {place: placeInput.value}))
                 .then(res => {
                     putTheThingInTheView(res)
                 })
                 .catch(err => {
                     nameInput.value = ''
+                    placeInput.value = ''
 
                     const notif = document.createElement('aside')
                     notif.innerHTML = `<p>${err.response.data}</p>

@@ -22,7 +22,7 @@ rollbar.log('Hello world!')
 const foods = ['Pizza', 'Burger', 'Cake']
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/index.html'))
+    res.sendFile(path.join(__dirname, 'public/index.html'))
 })
 
 app.get('/api/foods', (req, res) => {
